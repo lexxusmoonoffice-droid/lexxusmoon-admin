@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import AdminLayout from "@/components/AdminLayout";
+import ImageUploader from "@/components/ImageUploader";
 
 interface HeroSection {
   _id: string;
@@ -50,8 +51,7 @@ function HeroAdminPageContent() {
     }
   };
 
-  const handleAddImage = async (isMobile: boolean = false) => {
-    const url = isMobile ? newMobileImageUrl : newImageUrl;
+  const addImageByUrl = async (url: string, isMobile: boolean = false) => {
     if (!url.trim()) {
       setError("Please enter an image URL");
       return;
@@ -64,10 +64,10 @@ function HeroAdminPageContent() {
       await api.post("/hero/add-images", { [imageType]: [url] });
 
       if (isMobile) {
-        setMobileImages([...mobileImages, url]);
+        setMobileImages((prev) => [...prev, url]);
         setNewMobileImageUrl("");
       } else {
-        setImages([...images, url]);
+        setImages((prev) => [...prev, url]);
         setNewImageUrl("");
       }
       setSuccess(`${isMobile ? "Mobile" : "Desktop"} image added successfully!`);
@@ -76,6 +76,9 @@ function HeroAdminPageContent() {
       setError(err.response?.data?.message || "Failed to add image");
     }
   };
+
+  const handleAddImage = (isMobile: boolean = false) =>
+    addImageByUrl(isMobile ? newMobileImageUrl : newImageUrl, isMobile);
 
   const handleRemoveImage = async (imageUrl: string, isMobile: boolean = false) => {
     try {
@@ -233,6 +236,13 @@ function HeroAdminPageContent() {
             >
               Add Desktop Image
             </button>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
+              <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+              <span style={{ fontSize: 12, color: "#9ca3af" }}>or</span>
+              <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+            </div>
+            <ImageUploader onUploaded={(url) => addImageByUrl(url, false)} />
           </div>
         </div>
       )}
@@ -296,6 +306,13 @@ function HeroAdminPageContent() {
             >
               Add Mobile Image
             </button>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "4px 0" }}>
+              <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+              <span style={{ fontSize: 12, color: "#9ca3af" }}>or</span>
+              <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+            </div>
+            <ImageUploader onUploaded={(url) => addImageByUrl(url, true)} />
           </div>
         </div>
       )}
