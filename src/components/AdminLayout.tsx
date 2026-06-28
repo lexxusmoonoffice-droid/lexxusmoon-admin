@@ -11,6 +11,7 @@ const sidebarLinks = [
   { label: "Blogs", href: "/blogs", icon: "📝" },
   { label: "Comments", href: "/comments", icon: "💬" },
   { label: "Contacts", href: "/contacts", icon: "📩" },
+  { label: "Settings", href: "/settings", icon: "⚙️" },
 ];
 
 export default function AdminLayout({
